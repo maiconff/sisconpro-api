@@ -1,0 +1,56 @@
+-- criação da tabela maquinas
+create table MAQUINAS (
+	codigo serial primary key, 
+	nome varchar(40) not null, 
+	descricao varchar(70) not null, 
+	capacidade varchar(7) not null 	
+);
+
+-- inserindo registros na tabela maquinas
+insert into MAQUINAS (nome, descricao, capacidade) 
+values ('Romi 200', 'Maquina manual com 2 portas', '220g'), ('Haitian 220', 'Maquina manual e automatica', '220g')
+returning codigo, nome, descricao, capacidade;
+
+-- atualizando registros na tabela maquinas
+UPDATE maquinas SET  nome='Romi 200', descricao='Maquina manual com 1 porta', capacidade='200g'
+	WHERE codigo=1
+returning codigo, nome, descricao, capacidade;
+	
+-- removendo registros da tabela maquinas
+DELETE from maquinas where codigo = 3;
+
+-- selecionando registros na tabela maquinas
+select codigo, nome, descricao, capacidade from maquinas order by nome;
+
+-- -- -- -- --
+
+-- criação da tabela pecas
+create table pecas (
+	codigo serial primary key, 
+	nome varchar(40) not null, 
+	descricao varchar(70) not null, 
+	nro_cavidade integer not null, 
+	maquina integer not null, 
+	foreign key (maquina) references maquinas (codigo)
+);
+
+-- inserindo alguns registros na tabela pecas
+insert into pecas (nome, descricao, nro_cavidade, maquina) 
+values ('Anel Trava', 'Cor Laranja', 7, 1), ('Mancal Auto-Lub', 'Para Conj.Mancalização', 2, 1)
+returning codigo, nome, descricao, nro_cavidade, maquina;
+
+-- atualizando um registro na tabela pecas 
+UPDATE pecas
+	SET nome='Anel Trava', descricao='Cor Amarela', nro_cavidade=8, maquina=1
+	WHERE codigo=2
+returning codigo, nome, descricao, nro_cavidade, maquina;
+	
+-- apagando registros 
+delete from pecas where codigo = 4;
+	
+-- selecionando registros na tabelas pecas relacionando com o maquinas
+select p.codigo as codigo, p.nome as nome, p.descricao as descricao, p.nro_cavidade as nro_cavidade, 
+p.maquina as maquina, m.nome as nomemaquina
+from pecas p
+join maquinas m on p.maquina = m.codigo
+order by p.nome;
